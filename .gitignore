@@ -1,0 +1,3 @@
+/docker
+/app/**/__pycache__
+.env
