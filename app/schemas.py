@@ -1,9 +1,18 @@
 from datetime import datetime
-from pydantic import BaseModel, Field, field_validator
+from pydantic import BaseModel, Field, model_validator
 
 
-class UserCreate(BaseModel):
+class BaseUser(BaseModel):
     name: str = Field(max_length=20, examples=["テストユーザー"])
+
+
+class UserCreate(BaseUser):
+    pass
+
+
+class UserResponse(BaseUser):
+    created_at: datetime
+    updated_at: datetime
 
 
 class RoomCreate(BaseModel):
@@ -16,16 +25,16 @@ class BookingCreate(BaseModel):
     start_date_time: datetime = Field()
     end_date_time: datetime = Field()
 
-    @field_validator('start_date_time', 'end_date_time', pre=True, always=True)
-    def validate_times(cls, v, values, field):
+    @model_validator(mode="before")
+    def validate_times(self):
         errors = []
 
-        start = values.get('start_date_time')
-        end = values.get('end_date_time')
+        start = self.start_date_time
+        end = self.end_date_time
 
         # すべてのフィールドが存在するか確認
         if not start or not end:
-            return v
+            return self
 
         # 1. 時間が15分刻みかどうかを確認
         if start.minute % 15 != 0:
@@ -51,4 +60,4 @@ class BookingCreate(BaseModel):
         if errors:
             raise ValueError(errors)
 
-        return v
+        return self
