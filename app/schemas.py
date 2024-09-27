@@ -2,6 +2,7 @@ from datetime import datetime
 from pydantic import BaseModel, Field, model_validator
 
 
+# User
 class BaseUser(BaseModel):
     name: str = Field(max_length=20, examples=["テストユーザー"])
 
@@ -15,11 +16,22 @@ class UserResponse(BaseUser):
     updated_at: datetime
 
 
-class RoomCreate(BaseModel):
+# Room
+class RoomBase(BaseModel):
     name: str = Field(max_length=20, examples=["テスト部屋"])
-    capacity: int = Field(gt=1, examples=[6])
+    capacity: int = Field(ge=1, examples=[6])
 
 
+class RoomCreate(RoomBase):
+    pass
+
+
+class RoomResponse(RoomBase):
+    created_at: datetime
+    updated_at: datetime
+
+
+# Booking
 class BookingCreate(BaseModel):
     reserved_num: int = Field()
     start_date_time: datetime = Field()
