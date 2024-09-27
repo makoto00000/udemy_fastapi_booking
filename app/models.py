@@ -48,29 +48,30 @@ class Booking(Base):
     user = relationship("User", back_populates="bookings")
     room = relationship("Room", back_populates="bookings")
 
+    # チェック制約
     __table_args__ = (
-        # 予約する時間は15分刻みであること
+        # 15分間隔チェック
         CheckConstraint(
-            "EXTRACT(MINUTE FROM start_date_time) % 15 = 0 AND "
-            "EXTRACT(MINUTE FROM end_date_time) % 15 = 0",
-            name="check_15_minute_interval"
+            "CAST(strftime('%M', start_date_time) AS INTEGER) % 15 = 0 AND "
+            "CAST(strftime('%M', end_date_time) AS INTEGER) % 15 = 0",
+            name='check_15_minute_interval'
         ),
-        # 利用時間は9:00~20:00であること
+        # 営業時間内のチェック（9時から20時の範囲内）
         CheckConstraint(
-            "EXTRACT(HOUR FROM start_date_time) >= 9 AND "
-            "EXTRACT(HOUR FROM start_date_time) < 20 AND "
-            "EXTRACT(HOUR FROM end_date_time) >= 9 AND "
-            "EXTRACT(HOUR FROM end_date_time) <= 20",
-            name="check_time_range"
+            "CAST(strftime('%H', start_date_time) AS INTEGER) >= 9 AND "
+            "CAST(strftime('%H', start_date_time) AS INTEGER) < 20 AND "
+            "CAST(strftime('%H', end_date_time) AS INTEGER) >= 9 AND "
+            "CAST(strftime('%H', end_date_time) AS INTEGER) <= 20",
+            name='check_time_range'
         ),
-        # 開始時間と終了時間が同じ日付であること
+        # 同じ日であることのチェック
         CheckConstraint(
             "DATE(start_date_time) = DATE(end_date_time)",
-            name="check_same_day"
+            name='check_same_day'
         ),
-        # 開始時間が終了時間よりも前であること
+        # 開始時間が終了時間より前であることのチェック
         CheckConstraint(
             "start_date_time < end_date_time",
-            name="check_start_before_end"
+            name='check_start_before_end'
         ),
     )
