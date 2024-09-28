@@ -9,7 +9,7 @@ from fastapi.testclient import TestClient  # noqa: E402
 from sqlalchemy import create_engine  # noqa: E402
 from sqlalchemy.pool import StaticPool  # noqa: E402
 from sqlalchemy.orm import Session, sessionmaker  # noqa: E402
-from models import Base  # noqa: E402
+from models import Base, User, Room  # noqa: E402
 from main import app  # noqa: E402
 from database import get_db  # noqa: E402
 
@@ -27,6 +27,11 @@ def session_fixture():
     db = SessionLocal()
 
     try:
+        user1 = User(name="user1")
+        room1 = Room(name="room1", capacity=1)
+        db.add(user1)
+        db.add(room1)
+        db.commit()
         yield db
     finally:
         db.close()
