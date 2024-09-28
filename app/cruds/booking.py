@@ -1,7 +1,14 @@
 from fastapi import HTTPException
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, joinedload
 from models import Booking, Room
 from schemas import BookingCreate, BookingValidationMessages
+
+
+def find_all(db: Session):
+    return db.query(Booking).options(
+        joinedload(Booking.user),
+        joinedload(Booking.room)
+    ).all()
 
 
 def create(db: Session, booking_create: BookingCreate,

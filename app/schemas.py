@@ -90,7 +90,7 @@ class BookingCreate(BookingBase):
 
 
 class BookingResponse(BookingBase):
-    user_id: int
-    room_id: int
+    user: UserResponse
+    room: RoomResponse
     created_at: datetime
     updated_at: datetime

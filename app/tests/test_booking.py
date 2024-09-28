@@ -18,8 +18,6 @@ def test_create(client_fixture: TestClient):
     assert booking["reserved_num"] == 1
     assert booking["start_date_time"] == "2020-01-01T09:00:00"
     assert booking["end_date_time"] == "2020-01-01T12:00:00"
-    assert booking["user_id"] == 1
-    assert booking["room_id"] == 1
 
 
 # 部屋の定員を超えているとき
